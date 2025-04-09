@@ -1,21 +1,21 @@
-#include <termios.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
 #include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/syscall.h>
+#include <termios.h>
+#include <unistd.h>
 
 struct termios original_attrs;
 
-void clear_screen(void) {
-	syscall(SYS_write, STDOUT_FILENO, "\033[H\033[J", 6);
-}
-
-void disable_raw_mode(void) {
+void
+disable_raw_mode(void)
+{
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &original_attrs);
 }
 
-void enable_raw_mode(void) {
+void
+enable_raw_mode(void)
+{
 	tcgetattr(STDIN_FILENO, &original_attrs);
 	atexit(disable_raw_mode);
 
@@ -24,8 +24,15 @@ void enable_raw_mode(void) {
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
+void
+clear_screen(void)
+{
+	syscall(SYS_write, STDOUT_FILENO, "\033[H\033[J", 6);
+}
 
-int main(void) {
+int 
+main(void)
+{
 	enable_raw_mode();
 	clear_screen();
 	char c;
